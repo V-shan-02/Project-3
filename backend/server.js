@@ -22,47 +22,61 @@ mongoose
     console.log(error);
   });
 
-//routes
-
 server.get("/", (request, response) => {
-  response.send("Live");
+  response.send("LIVE!");
 });
 
 server.get("/products", async (request, response) => {
-  await Product.find()
-    .then((res) => {
-      response.send(res);
-    })
-    .catch((error) => {
-      response.json(error);
-    });
+  try {
+    await Product.find().then((result) => response.status(200).send(result));
+  } catch (error) {
+    console.log(error.message);
+  }
 });
 
-server.post("/products", async (request, response) => {
+server.post("/add-product", async (request, response) => {
   const { productName, brand, image, price } = request.body;
   const product = new Product({
     productName,
     brand,
-    image,
     price,
+    image,
+    id: crypto.randomUUID(),
   });
-  await product
-    .save()
-    .then((res) => {
-      response.status(201).json({ message: "Product added successfully" });
-    })
-    .catch((error) => {
-      response.status(404).json(error.message);
-    });
+
+  try {
+    await product
+      .save()
+      .then((result) => response.status(201).send("Product added"));
+  } catch (error) {
+    console.log(error.message);
+  }
 });
 
 server.delete("/products/:id", async (request, response) => {
   const { id } = request.params;
-  await Product.findByIdAndDelete(id)
-    .then((res) => {
-      response.status(200).json({ message: "Product deleted successfully" });
-    })
-    .catch((error) => {
-      response.status(404).json(error.message);
-    });
+  try {
+    await Product.findByIdAndDelete(id).then((result) =>
+      response.status(200).send("Product deleted")
+    );
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
+server.patch("/products/:id", async (request, response) => {
+  const prodId = request.params.id;
+  const { productName, brand, image, price, id } = request.body;
+
+  try {
+    await Product.findByIdAndUpdate(prodId, {
+      productName,
+      brand,
+      image,
+      price,
+      id,
+    }).then((result) => response.status(200).send("Product updated"));
+  } catch (error) {
+    console.log(error.message);
+  }
 });

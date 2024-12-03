@@ -155,3 +155,7 @@ img {
 .product-form {
   width: 20%;
 }
+
+#edit-button {
+  background-color: rgb(76, 43, 226);
+}
