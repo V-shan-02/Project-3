@@ -4,6 +4,7 @@ import ProductsContainer from "./ProductsContainer";
 import NavBar from "./NavBar";
 import axios from "axios";
 import ProductForm from "./ProductForm";
+import { useNavigate } from "react-router-dom";
 
 export default function GroceriesAppContainer() {
   /////////// States ///////////
@@ -11,6 +12,8 @@ export default function GroceriesAppContainer() {
   const [cartList, setCartList] = useState([]);
   const [productList, setProductList] = useState([]);
   const [postResponse, setPostResponse] = useState("");
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     productName: "",
     brand: "",
@@ -191,18 +194,18 @@ export default function GroceriesAppContainer() {
   const handleClearCart = () => {
     setCartList([]);
   };
+
+  const handleNavigateToAddProduct = () => {
+    navigate("/add-product");
+  };
+
   /////////Renderer
   return (
     <div>
       <NavBar quantity={cartList.length} />
+      <button onClick={handleNavigateToAddProduct}>Add Product</button>
+
       <div className="GroceriesApp-Container">
-        <ProductForm
-          handleOnSubmit={handleOnSubmit}
-          postResponse={postResponse}
-          handleOnChange={handleOnChange}
-          formData={formData}
-          isEditing={isEditing}
-        />
         <ProductsContainer
           products={productList}
           handleAddQuantity={handleAddQuantity}
