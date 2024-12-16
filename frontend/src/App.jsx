@@ -11,38 +11,26 @@ import ProductForm from "./Components/ProductForm";
 import LikeEditPage from "./Components/LikeEditPage";
 import AddProduct from "./Components/AddProduct";
 import EditProduct from "./Components/EditProduct";
+
 function App() {
   return (
-    <>
-      <Router>
-        <Routes>
-          <Route element={<PrivateRoute />}>
-            <Route path="/private" element={<PrivatePage />} />
-          </Route>
-
-          <Route path="/not-authorized" element={<NotAuthorized />} />
-
-          {<Route path="/login" element={<LoginForm />} />}
-          <Route path="/" element={<LoginForm />} />
-          <Route path="/create-user" element={<CreateUserPage />} />
+    <Router>
+      <Routes>
+        <Route element={<PrivateRoute />}>
           <Route path="/private" element={<PrivatePage />} />
+        </Route>
 
-          <Route path="/main" element={<GroceriesAppContainer />} />
-          <Route path="/like-edit" element={<LikeEditPage />} />
-
-          <Route
-            path="/add-product"
-            element={<ProductForm isEditing={false} />}
-          />
-          <Route
-            path="/edit-product/:id"
-            element={<ProductForm isEditing={true} />}
-          />
-
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Router>
-    </>
+        <Route path="/not-authorized" element={<NotAuthorized />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/" element={<LoginForm />} />
+        <Route path="/create-user" element={<CreateUserPage />} />
+        <Route path="/main" element={<GroceriesAppContainer />} />
+        <Route path="/like-edit" element={<LikeEditPage />} />
+        <Route path="/add-product" element={<AddProduct />} />
+        <Route path="/edit-product/:productId" element={<EditProduct />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </Router>
   );
 }
 

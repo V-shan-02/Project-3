@@ -7,7 +7,6 @@ export default function ProductForm({
 }) {
   return (
     <div className="product-form">
-      <h2>Product Form</h2>
       <form onSubmit={handleOnSubmit}>
         <input
           type="text"

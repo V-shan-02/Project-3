@@ -159,3 +159,6 @@ img {
 #edit-button {
   background-color: rgb(76, 43, 226);
 }
+.addproduct {
+  display: flex;
+}

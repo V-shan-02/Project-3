@@ -1,8 +1,10 @@
-export default function NavBar({ quantity }) {
+import React from "react";
+
+export default function NavBar({ username, quantity }) {
   return (
     <nav className="NavBar">
       <div className="NavDiv NavUser">
-        <h3>Hello, username</h3>
+        <h3>Hello, {username}</h3> {/* Display the logged-in username */}
       </div>
       <div className="NavDiv NavTitle">
         <h2>Groceries App 🍎</h2>

@@ -9,6 +9,7 @@ require("dotenv").config();
 const { DB_URI, JWT_SECRET } = process.env;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 server.use(cors());
 server.use(express.json());
@@ -29,6 +30,7 @@ server.get("/", (request, response) => {
   response.send("LIVE!");
 });
 
+// Fetch all products
 server.get("/products", async (request, response) => {
   try {
     await Product.find().then((result) => response.status(200).send(result));
@@ -37,6 +39,7 @@ server.get("/products", async (request, response) => {
   }
 });
 
+// Add product
 server.post("/add-product", async (request, response) => {
   const { productName, brand, image, price } = request.body;
   const product = new Product({
@@ -56,6 +59,7 @@ server.post("/add-product", async (request, response) => {
   }
 });
 
+// Delete product by ID
 server.delete("/products/:id", async (request, response) => {
   const { id } = request.params;
   try {
@@ -67,23 +71,52 @@ server.delete("/products/:id", async (request, response) => {
   }
 });
 
-server.patch("/products/:id", async (request, response) => {
-  const prodId = request.params.id;
-  const { productName, brand, image, price, id } = request.body;
+// Fetch single product by ID
+server.get("/products/:id", async (req, res) => {
+  const productId = req.params.id;
+  console.log(`Fetching product with ID: ${productId}`); // Debugging
 
   try {
-    await Product.findByIdAndUpdate(prodId, {
-      productName,
-      brand,
-      image,
-      price,
-      id,
-    }).then((result) => response.status(200).send("Product updated"));
+    const product = await Product.findById(productId); // Fetch product by ID
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+    res.status(200).json(product); // Send product data as JSON
   } catch (error) {
-    console.log(error.message);
+    console.error("Error fetching product:", error);
+    res.status(500).send("Error fetching product");
   }
 });
 
+// Update product by ID
+server.patch("/products/:id", async (req, res) => {
+  const productId = req.params.id;
+  const { productName, brand, image, price } = req.body; // Extract the updated data
+
+  try {
+    const product = await Product.findById(productId); // Find the product by ID
+
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    // Update the product fields
+    product.productName = productName || product.productName; // Use existing value if not updated
+    product.brand = brand || product.brand;
+    product.image = image || product.image;
+    product.price = price || product.price;
+
+    // Save the updated product
+    await product.save();
+
+    res.status(200).json({ success: true, product });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).json({ success: false, message: "Error updating product" });
+  }
+});
+
+// Create user
 server.post("/create-user", async (request, response) => {
   const { username, password } = request.body;
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -104,6 +137,7 @@ server.post("/create-user", async (request, response) => {
   }
 });
 
+// Login user
 server.post("/login", async (request, response) => {
   const { username, password } = request.body;
   const jwtToken = jwt.sign({ id: username }, JWT_SECRET);
@@ -114,7 +148,7 @@ server.post("/login", async (request, response) => {
     }
     bcrypt.compare(password, user.password, (error, result) => {
       if (error) {
-        return response.send({ message: "An error occured" });
+        return response.send({ message: "An error occurred" });
       }
       if (result) {
         return response.send({
@@ -127,3 +161,5 @@ server.post("/login", async (request, response) => {
     });
   });
 });
+
+module.exports = server;
